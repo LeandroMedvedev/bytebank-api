@@ -34,4 +34,11 @@ public class UserService {
 
         return new UserDetailsDTO(savedUser);
     }
+
+    public UserDetailsDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserDetailsDTO(user);
+    }
 }
