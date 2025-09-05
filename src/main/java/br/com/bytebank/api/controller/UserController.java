@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping("/users")
 public class UserController {
@@ -15,6 +17,13 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDetailsDTO>> listAllUsers() {
+        var users = userService.getAllUsers();
+
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping

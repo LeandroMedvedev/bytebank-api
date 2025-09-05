@@ -6,6 +6,8 @@ import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -13,6 +15,14 @@ public class UserService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public List<UserDetailsDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(UserDetailsDTO::new)
+                .toList();
     }
 
     public UserDetailsDTO createUser(UserCreationDTO creationDTO) {
