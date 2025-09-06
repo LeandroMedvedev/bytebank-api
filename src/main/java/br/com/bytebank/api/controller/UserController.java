@@ -4,7 +4,6 @@ import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
 import br.com.bytebank.api.service.UserService;
-import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,10 +38,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailsDTO> getUserDetails(@PathVariable Long id) {
+    public ResponseEntity<UserDetailsDTO> getUserById(@PathVariable Long id) {
             var userDetails = userService.getUserById(id);
 
             return ResponseEntity.ok(userDetails);
+    }
+
+    @GetMapping(params = "email")
+    public ResponseEntity<UserDetailsDTO> getUserByEmail(@RequestParam String email) {
+        var userDetails = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(userDetails);
     }
 
     @PutMapping("/{id}")

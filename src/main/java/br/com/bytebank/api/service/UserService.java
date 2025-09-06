@@ -64,7 +64,15 @@ public class UserService {
 
     public UserDetailsDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        return new UserDetailsDTO(user);
+    }
+
+    public UserDetailsDTO getUserByEmail(String email) {
+        String normalizedEmail = email.toLowerCase();
+        User user = userRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + normalizedEmail));
 
         return new UserDetailsDTO(user);
     }
@@ -72,7 +80,7 @@ public class UserService {
     @Transactional
     public UserDetailsDTO updateUser(Long id, UserUpdateDTO updateDTO) {
         User userToUpdate = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         // Valida e atualiza e-mail, se foi fornecido
         if (updateDTO.email() != null) {
