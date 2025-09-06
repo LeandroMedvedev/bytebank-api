@@ -40,33 +40,22 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDetailsDTO> getUserDetails(@PathVariable Long id) {
-        try {
             var userDetails = userService.getUserById(id);
+
             return ResponseEntity.ok(userDetails);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDetailsDTO> updateUser(
             @PathVariable Long id, @RequestBody UserUpdateDTO updateDTO
     ) {
-        try {
             var updatedUser = userService.updateUser(id, updateDTO);
             return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        try {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

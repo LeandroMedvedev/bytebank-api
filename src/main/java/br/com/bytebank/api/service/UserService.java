@@ -4,6 +4,7 @@ import br.com.bytebank.api.domain.user.User;
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
+import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class UserService {
 
     public UserDetailsDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
         return new UserDetailsDTO(user);
     }
@@ -57,7 +58,7 @@ public class UserService {
     @Transactional
     public UserDetailsDTO updateUser(Long id, UserUpdateDTO updateDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
         if (updateDTO.name() != null) {
             user.setName(updateDTO.name());
@@ -79,7 +80,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found with id " + id);
         }
 
         /*
