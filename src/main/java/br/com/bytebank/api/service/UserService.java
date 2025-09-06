@@ -8,6 +8,7 @@ import br.com.bytebank.api.exception.DuplicateResourceException;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +18,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(
+            UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserDetailsDTO> getAllUsers() {
@@ -31,25 +35,25 @@ public class UserService {
     }
 
     public UserDetailsDTO createUser(UserCreationDTO creationDTO) {
-        /*
-         * TODO: Criptografar senha
-         */
 
         String normalizedEmail = creationDTO.email().toLowerCase();
 
         if (userRepository.findByEmail(normalizedEmail).isPresent()) {
-            throw new DuplicateResourceException("Email already in use: " + creationDTO.email());
+            throw new DuplicateResourceException("Email already in use: " + normalizedEmail);
         }
 
         if (userRepository.findByDocumentNumber(creationDTO.documentNumber()).isPresent()) {
-            throw new DuplicateResourceException("Document number already in use: " + creationDTO.documentNumber());
+            throw new DuplicateResourceException(
+                    "Document number already in use: " + creationDTO.documentNumber());
         }
+
+        var encryptedPassword = passwordEncoder.encode(creationDTO.password());
 
         var user = new User(
                 null,
                 creationDTO.name(),
                 normalizedEmail,
-                creationDTO.password(),
+                encryptedPassword,
                 creationDTO.documentNumber()
         );
 
