@@ -3,7 +3,9 @@ package br.com.bytebank.api.service;
 import br.com.bytebank.api.domain.user.User;
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
+import br.com.bytebank.api.domain.user.UserUpdateDTO;
 import br.com.bytebank.api.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +50,28 @@ public class UserService {
     public UserDetailsDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserDetailsDTO(user);
+    }
+
+    @Transactional
+    public UserDetailsDTO updateUser(Long id, UserUpdateDTO updateDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (updateDTO.name() != null) {
+            user.setName(updateDTO.name());
+        }
+
+        if (updateDTO.email() != null) {
+            user.setEmail(updateDTO.email());
+        }
+
+        /*
+         * @Transactional já garante que a alteração será salva ao final do método.
+         * JPA detecta a alteração no objeto 'user' e persiste no banco.
+         * Daí não haver necessidade de chamar userRepository.save(user) aqui.
+         */
 
         return new UserDetailsDTO(user);
     }

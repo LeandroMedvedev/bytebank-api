@@ -2,6 +2,7 @@ package br.com.bytebank.api.controller;
 
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
+import br.com.bytebank.api.domain.user.UserUpdateDTO;
 import br.com.bytebank.api.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDetailsDTO> registerUser(@RequestBody UserCreationDTO creationDTO, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<UserDetailsDTO> registerUser(
+            @RequestBody UserCreationDTO creationDTO, UriComponentsBuilder uriBuilder
+    ) {
         var newUserDetails = userService.createUser(creationDTO);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(newUserDetails.id()).toUri();
 
@@ -39,6 +42,18 @@ public class UserController {
         try {
             var userDetails = userService.getUserById(id);
             return ResponseEntity.ok(userDetails);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDetailsDTO> updateUser(
+            @PathVariable Long id, @RequestBody UserUpdateDTO updateDTO
+    ) {
+        try {
+            var updatedUser = userService.updateUser(id, updateDTO);
+            return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
