@@ -3,4 +3,12 @@ package br.com.bytebank.api.repository;
 import br.com.bytebank.api.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {}
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    // Spring Data JPA entende "findByEmail" e cria a query: "SELECT u FROM User u WHERE u.email = ?"
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByDocumentNumber(String documentNumber);
+}

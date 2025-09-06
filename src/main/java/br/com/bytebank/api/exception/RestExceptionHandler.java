@@ -21,4 +21,14 @@ public class RestExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus. NOT_FOUND);
     }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDuplicateResource(DuplicateResourceException ex) {
+        var errorResponse = new ErrorResponseDTO(
+                ex.getMessage(),
+                HttpStatus.CONFLICT,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }

@@ -4,12 +4,14 @@ import br.com.bytebank.api.domain.user.User;
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
+import br.com.bytebank.api.exception.DuplicateResourceException;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -30,15 +32,23 @@ public class UserService {
 
     public UserDetailsDTO createUser(UserCreationDTO creationDTO) {
         /*
-         * TODO:
-         *  Adicionar validação para impossibilitar e-mail ou documento duplicado
-         *  Criptografar senha
+         * TODO: Criptografar senha
          */
+
+        String normalizedEmail = creationDTO.email().toLowerCase();
+
+        if (userRepository.findByEmail(normalizedEmail).isPresent()) {
+            throw new DuplicateResourceException("Email already in use: " + creationDTO.email());
+        }
+
+        if (userRepository.findByDocumentNumber(creationDTO.documentNumber()).isPresent()) {
+            throw new DuplicateResourceException("Document number already in use: " + creationDTO.documentNumber());
+        }
 
         var user = new User(
                 null,
                 creationDTO.name(),
-                creationDTO.email(),
+                normalizedEmail,
                 creationDTO.password(),
                 creationDTO.documentNumber()
         );
@@ -57,15 +67,25 @@ public class UserService {
 
     @Transactional
     public UserDetailsDTO updateUser(Long id, UserUpdateDTO updateDTO) {
-        User user = userRepository.findById(id)
+        User userToUpdate = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
 
-        if (updateDTO.name() != null) {
-            user.setName(updateDTO.name());
+        // Valida e atualiza e-mail, se foi fornecido
+        if (updateDTO.email() != null) {
+            String normalizedEmail = updateDTO.email().toLowerCase();
+
+            // Busca se já há algum usuário com novo e-mail
+            Optional<User> userWithSameEmail = userRepository.findByEmail(normalizedEmail);
+
+            // Valida se e-mail já existe E pertence a usuário diferente
+            if (userWithSameEmail.isPresent() && !userWithSameEmail.get().getId().equals(id)) {
+                throw new DuplicateResourceException("Email already in use: " + normalizedEmail);
+            }
+            userToUpdate.setEmail(normalizedEmail);
         }
 
-        if (updateDTO.email() != null) {
-            user.setEmail(updateDTO.email());
+        if (updateDTO.name() != null) {
+            userToUpdate.setName(updateDTO.name());
         }
 
         /*
@@ -74,7 +94,7 @@ public class UserService {
          * Daí não haver necessidade de chamar userRepository.save(user) aqui.
          */
 
-        return new UserDetailsDTO(user);
+        return new UserDetailsDTO(userToUpdate);
     }
 
     @Transactional
