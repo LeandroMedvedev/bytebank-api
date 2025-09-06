@@ -75,4 +75,17 @@ public class UserService {
 
         return new UserDetailsDTO(user);
     }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
+
+        /*
+         * @Transactional garante que a exclusão será gerenciada como transação segura no db.
+         */
+
+        userRepository.deleteById(id);
+    }
 }
