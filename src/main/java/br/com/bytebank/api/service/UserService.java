@@ -34,6 +34,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
     public UserDetailsDTO createUser(UserCreationDTO creationDTO) {
 
         String normalizedEmail = creationDTO.email().toLowerCase();

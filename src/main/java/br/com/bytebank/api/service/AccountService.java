@@ -51,6 +51,13 @@ public class AccountService {
         return new AccountDetailsDTO(savedAccount);
     }
 
+    public AccountDetailsDTO getAccountById(Long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        return new AccountDetailsDTO(account);
+    }
+
     private String generateUniqueAccountNumber() {
         String accountNumber;
         do {  // Loop para garantir que o número gerado seja único
