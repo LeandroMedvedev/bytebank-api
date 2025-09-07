@@ -7,9 +7,9 @@ import br.com.bytebank.api.domain.user.UserUpdateDTO;
 import br.com.bytebank.api.exception.DuplicateResourceException;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
