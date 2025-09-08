@@ -4,9 +4,12 @@ import br.com.bytebank.api.domain.user.User;
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
+import br.com.bytebank.api.exception.BusinessRuleException;
 import br.com.bytebank.api.exception.DuplicateResourceException;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
+import br.com.bytebank.api.repository.AccountRepository;
 import br.com.bytebank.api.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(
-            UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public List<UserDetailsDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -114,6 +113,10 @@ public class UserService {
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id " + id);
+        }
+
+        if (!accountRepository.findByUserId(id).isEmpty()) {
+            throw new BusinessRuleException("User cannot be deleted because they have associated accounts.");
         }
 
         /*

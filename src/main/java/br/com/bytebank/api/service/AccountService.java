@@ -3,6 +3,7 @@ package br.com.bytebank.api.service;
 import br.com.bytebank.api.domain.account.Account;
 import br.com.bytebank.api.domain.account.AccountCreationDTO;
 import br.com.bytebank.api.domain.account.AccountDetailsDTO;
+import br.com.bytebank.api.domain.account.AccountUpdateDTO;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.AccountRepository;
 import br.com.bytebank.api.repository.UserRepository;
@@ -69,6 +70,16 @@ public class AccountService {
                 .map(AccountDetailsDTO::new)  // Method Reference substitui lambda
 //              .map(account -> new AccountDetailsDTO(account))  // Converter cada account para AccountDetailsDTO
                 .toList();
+    }
+
+    @Transactional
+    public AccountDetailsDTO updateAccountStatus(Long id, AccountUpdateDTO updateDTO) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        account.setActive(updateDTO.isActive());
+
+        return new AccountDetailsDTO(account);  // Método com @Transactional salva automaticamente alteração
     }
 
     @Transactional

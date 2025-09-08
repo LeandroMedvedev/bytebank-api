@@ -6,6 +6,7 @@ import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
 import br.com.bytebank.api.service.AccountService;
 import br.com.bytebank.api.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDetailsDTO> registerUser(
-            @RequestBody UserCreationDTO creationDTO, UriComponentsBuilder uriBuilder
+            @RequestBody @Valid UserCreationDTO creationDTO, UriComponentsBuilder uriBuilder
     ) {
         var newUserDetails = userService.createUser(creationDTO);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(newUserDetails.id()).toUri();
