@@ -71,6 +71,15 @@ public class AccountService {
                 .toList();
     }
 
+    @Transactional
+    public void deleteAccount(Long id) {
+        if (!accountRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Account not found with id: " + id);
+        }
+
+        accountRepository.deleteById(id);
+    }
+
     private String generateUniqueAccountNumber() {
         String accountNumber;
         do {  // Loop para garantir que o número gerado seja único
