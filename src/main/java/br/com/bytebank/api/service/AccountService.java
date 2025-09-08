@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -56,6 +57,18 @@ public class AccountService {
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
 
         return new AccountDetailsDTO(account);
+    }
+
+    public List<AccountDetailsDTO> getAccountsByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found with id: " + userId);
+        }
+
+        return accountRepository.findByUserId(userId)
+                .stream()
+                .map(AccountDetailsDTO::new)  // Method Reference substitui lambda
+//              .map(account -> new AccountDetailsDTO(account))  // Converter cada account para AccountDetailsDTO
+                .toList();
     }
 
     private String generateUniqueAccountNumber() {

@@ -1,24 +1,25 @@
 package br.com.bytebank.api.controller;
 
+import br.com.bytebank.api.domain.account.AccountDetailsDTO;
 import br.com.bytebank.api.domain.user.UserCreationDTO;
 import br.com.bytebank.api.domain.user.UserDetailsDTO;
 import br.com.bytebank.api.domain.user.UserUpdateDTO;
+import br.com.bytebank.api.service.AccountService;
 import br.com.bytebank.api.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-@RestController()
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<List<UserDetailsDTO>> listAllUsers() {
@@ -63,5 +64,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{userId}/accounts")
+    public ResponseEntity<List<AccountDetailsDTO>> listUserAccounts(@PathVariable Long userId) {
+        var accountList = accountService.getAccountsByUserId(userId);
+        return ResponseEntity.ok(accountList);
     }
 }
