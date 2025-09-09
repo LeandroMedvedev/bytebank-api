@@ -5,8 +5,7 @@ import lombok.*;
 
 @Table(name = "users")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -23,6 +22,6 @@ public class User {
 
     private String password;
 
-    @Column(unique = true)
+    @Column(name = "document_number", unique = true)
     private String documentNumber;
 }

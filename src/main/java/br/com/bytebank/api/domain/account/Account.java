@@ -8,8 +8,7 @@ import java.math.BigDecimal;
 
 @Table(name = "accounts")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
