@@ -80,4 +80,42 @@ public class TransactionService {
 
         return new TransactionDetailsDTO(transaction);
     }
+
+    @Transactional
+    public TransactionDetailsDTO performTransfer(TransferRequestDTO requestDTO) {
+        if (requestDTO.sourceAccountNumber().equals(requestDTO.destinationAccountNumber())) {
+            throw new BusinessRuleException("Source and destination accounts cannot be the same.");
+        }
+
+        var sourceAccount = accountRepository.findByAccountNumber(requestDTO.sourceAccountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Source account not found."));
+
+        var destinationAccount = accountRepository.findByAccountNumber(requestDTO.destinationAccountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found."));
+
+        if (!sourceAccount.isActive() || !destinationAccount.isActive()) {
+            throw new BusinessRuleException("Both source and destination accounts must be active.");
+        }
+
+        if (sourceAccount.getBalance().compareTo(requestDTO.amount()) < 0) {
+            throw new BusinessRuleException("insufficient funds.");
+        }
+
+        sourceAccount.setBalance(sourceAccount.getBalance().subtract(requestDTO.amount()));
+        destinationAccount.setBalance(destinationAccount.getBalance().add(requestDTO.amount()));
+
+        var transaction = new Transaction(
+                null,
+                requestDTO.amount(),
+                TransactionType.TRANSFER,
+                LocalDateTime.now(),
+                sourceAccount,
+                destinationAccount,
+                "Transfer operation"
+        );
+
+        transactionRepository.save(transaction);
+
+        return new TransactionDetailsDTO(transaction);
+    }
 }

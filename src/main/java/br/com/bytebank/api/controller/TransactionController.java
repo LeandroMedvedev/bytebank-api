@@ -2,6 +2,7 @@ package br.com.bytebank.api.controller;
 
 import br.com.bytebank.api.domain.transaction.DepositRequestDTO;
 import br.com.bytebank.api.domain.transaction.TransactionDetailsDTO;
+import br.com.bytebank.api.domain.transaction.TransferRequestDTO;
 import br.com.bytebank.api.domain.transaction.WithdrawalRequestDTO;
 import br.com.bytebank.api.service.TransactionService;
 import jakarta.validation.Valid;
@@ -42,6 +43,17 @@ public class TransactionController {
     public ResponseEntity<TransactionDetailsDTO> withdrawal(
             @RequestBody @Valid WithdrawalRequestDTO requestDTO, UriComponentsBuilder uriBuilder) {
         var newTransactionDetails = transactionService.performWithdrawal(requestDTO);
+        var uri = uriBuilder
+                .path("/transactions/{id}")
+                .buildAndExpand(newTransactionDetails.transactionId()).toUri();
+
+        return ResponseEntity.created(uri).body(newTransactionDetails);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransactionDetailsDTO> transfer(
+            @RequestBody @Valid TransferRequestDTO requestDTO, UriComponentsBuilder uriBuilder) {
+        var newTransactionDetails = transactionService.performTransfer(requestDTO);
         var uri = uriBuilder
                 .path("/transactions/{id}")
                 .buildAndExpand(newTransactionDetails.transactionId()).toUri();
