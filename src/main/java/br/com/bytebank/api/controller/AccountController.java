@@ -23,7 +23,9 @@ public class AccountController {
             UriComponentsBuilder uriBuilder
             ) {
         var newAccountDetails = accountService.createAccount(creationDTO);
-        var uri = uriBuilder.path("/accounts/{id}").buildAndExpand(newAccountDetails.id()).toUri();
+        var uri = uriBuilder
+                .path("/accounts/{id}")
+                .buildAndExpand(newAccountDetails.id()).toUri();
 
         return ResponseEntity.created(uri).body(newAccountDetails);
     }
@@ -36,7 +38,8 @@ public class AccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountDetailsDTO> updateAccount(@PathVariable Long id, @RequestBody @Valid AccountUpdateDTO updateDTO) {
+    public ResponseEntity<AccountDetailsDTO> updateAccount(
+            @PathVariable Long id, @RequestBody @Valid AccountUpdateDTO updateDTO) {
         var updateAccount = accountService.updateAccountStatus(id, updateDTO);
 
         return ResponseEntity.ok(updateAccount);

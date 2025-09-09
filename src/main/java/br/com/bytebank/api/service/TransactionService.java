@@ -1,9 +1,6 @@
 package br.com.bytebank.api.service;
 
-import br.com.bytebank.api.domain.transaction.DepositRequestDTO;
-import br.com.bytebank.api.domain.transaction.Transaction;
-import br.com.bytebank.api.domain.transaction.TransactionDetailsDTO;
-import br.com.bytebank.api.domain.transaction.TransactionType;
+import br.com.bytebank.api.domain.transaction.*;
 import br.com.bytebank.api.exception.BusinessRuleException;
 import br.com.bytebank.api.exception.ResourceNotFoundException;
 import br.com.bytebank.api.repository.AccountRepository;
@@ -27,7 +24,7 @@ public class TransactionService {
      * OU nada é salvo (tudo é revertido) mantendo dados consistentes.
      */
     @Transactional
-    public TransactionDetailsDTO performDeposit (DepositRequestDTO requestDTO) {
+    public TransactionDetailsDTO performDeposit(DepositRequestDTO requestDTO) {
         var destinationAccount = accountRepository.findByAccountNumber(requestDTO.destinationAccountNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Destination account not found."));
 
@@ -46,6 +43,37 @@ public class TransactionService {
                 null,  // Conta de origem é nula para depósitos
                 destinationAccount,
                 "Deposit operation"
+        );
+
+        transactionRepository.save(transaction);
+
+        return new TransactionDetailsDTO(transaction);
+    }
+
+    @Transactional
+    public TransactionDetailsDTO performWithdrawal(WithdrawalRequestDTO requestDTO) {
+        var sourceAccount = accountRepository.findByAccountNumber(requestDTO.sourceAccountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Source account not found."));
+
+        if (!sourceAccount.isActive()) {
+            throw new BusinessRuleException("Cannot withdraw from an inactive account.");
+        }
+
+        if (sourceAccount.getBalance().compareTo(requestDTO.amount()) < 0) {  // Há saldo?
+            throw new BusinessRuleException("Insufficient funds.");
+        }
+
+        sourceAccount.setBalance(sourceAccount.getBalance().subtract(requestDTO.amount()));
+        // Subtrair valor do saldo da conta
+
+        var transaction = new Transaction(
+                null,
+                requestDTO.amount(),
+                TransactionType.WITHDRAWAL,
+                LocalDateTime.now(),
+                sourceAccount,
+                null,  // Conta de destino é nula para saques
+                "Withdrawal operation"
         );
 
         transactionRepository.save(transaction);

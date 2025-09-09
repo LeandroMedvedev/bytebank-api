@@ -9,9 +9,9 @@ public record TransactionDetailsDTO(
         BigDecimal amount,
         String description,
         LocalDateTime date,
-        Long destinationAccountId,
+        String sourceAccountNumber,
         String destinationAccountNumber,
-        BigDecimal accountBalanceAfterTransaction
+        BigDecimal finalBalance
 ) {
     public TransactionDetailsDTO (Transaction transaction) {
         this(
@@ -20,9 +20,27 @@ public record TransactionDetailsDTO(
                 transaction.getAmount(),
                 transaction.getDescription(),
                 transaction.getTransactionDate(),
-                transaction.getDestinationAccount().getId(),
-                transaction.getDestinationAccount().getAccountNumber(),
-                transaction.getDestinationAccount().getBalance()  // Saldo já atualizado em conta
+                transaction.getSourceAccount() != null
+                        ? transaction.getSourceAccount().getAccountNumber()
+                        : null,
+                transaction.getDestinationAccount() != null
+                        ? transaction.getDestinationAccount().getAccountNumber()
+                        : null,
+                determineFinalBalance(transaction)
         );
+    }
+
+    private static BigDecimal determineFinalBalance(Transaction transaction) {
+        if (transaction.getTransactionType() == TransactionType.DEPOSIT) {
+            return transaction.getDestinationAccount().getBalance();
+
+        } else if (transaction.getTransactionType() == TransactionType.WITHDRAWAL) {
+            return transaction.getSourceAccount().getBalance();
+        }
+
+        // Para transferências, mostro o saldo da conta de origem
+        return transaction.getSourceAccount() != null
+                ? transaction.getSourceAccount().getBalance()
+                : null;
     }
 }
