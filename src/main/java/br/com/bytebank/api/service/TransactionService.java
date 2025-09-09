@@ -35,8 +35,8 @@ public class TransactionService {
             throw new BusinessRuleException("Cannot deposit into an inactive account.");
         }
 
-        // Usei .add() para somar, porque BigDecimal é imutável
         destinationAccount.setBalance(destinationAccount.getBalance().add(requestDTO.amount()));
+        // Usei .add() para somar, porque BigDecimal é imutável
 
         var transaction = new Transaction(
                 null,
@@ -47,6 +47,8 @@ public class TransactionService {
                 destinationAccount,
                 "Deposit operation"
         );
+
+        transactionRepository.save(transaction);
 
         return new TransactionDetailsDTO(transaction);
     }
