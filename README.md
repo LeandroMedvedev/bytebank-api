@@ -2,13 +2,15 @@
 
 API RESTful para um minissistema bancário, desenvolvida como parte do projeto de Bloco de Engenharia de Softwares Escaláveis do Instituto Infnet.
 
------
+---
 
 ## 📖 Sobre o Projeto
 
 O ByteBank é uma API _backend_ que simula as operações essenciais de um banco digital. Ela permite a gestão de usuários (clientes), a criação e administração de contas bancárias e a execução de transações financeiras como depósitos, saques e transferências.
 
 A arquitetura foi construída de forma modular e em camadas (Controller, Service, Repository), utilizando DTOs para garantir um contrato de API seguro e desacoplado da lógica de persistência.
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -20,6 +22,8 @@ A arquitetura foi construída de forma modular e em camadas (Controller, Service
 * 🧪 **H2 Database**: Banco de dados em memória para ambiente de desenvolvimento.
 * 🏛️ **Maven**: Gerenciador de dependências e _build_.
 * 📄 **Lombok**: Para reduzir código repetitivo (_boilerplate_).
+
+---
 
 ## 🚀 Como Executar o Projeto
 
@@ -33,6 +37,7 @@ A arquitetura foi construída de forma modular e em camadas (Controller, Service
 1.  Clone o repositório:
     ```bash
     git clone git@github.com:LeandroMedvedev/bytebank-api.git
+    
     cd bytebank-api
     ```
 2.  Execute a aplicação usando o _plugin_ do Maven:
@@ -40,6 +45,21 @@ A arquitetura foi construída de forma modular e em camadas (Controller, Service
     mvn spring-boot:run
     ```
 3.  A API estará disponível em `http://localhost:8080`.
+
+---
+
+## 🗺️ Diagrama Entidade Relacionamento (DER)
+
+O modelo relacional da aplicação foi projetado para normalizar os dados e garantir a integridade referencial entre as entidades.
+
+```
+/docs
+└── ERD.png
+```
+
+![DER](/docs/ERD.png)
+
+---
 
 ## ✨ Funcionalidades
 
@@ -49,6 +69,8 @@ A API atualmente suporta as seguintes funcionalidades:
 * **Gestão de Contas**: CRUD completo, com contas sempre associadas a um usuário.
 * **Operações Financeiras**: Depósitos, saques e transferências com validações de regras de negócio (saldo, status da conta, etc.).
 * **Tratamento de Erros**: Respostas de erro padronizadas e centralizadas para uma melhor experiência do consumidor da API.
+
+---
 
 ## 📚 Endpoints da API
 
@@ -82,6 +104,8 @@ A seguir, a documentação dos endpoints disponíveis.
 | `POST` | `/transactions/deposit` | Realiza um depósito em uma conta. | `{ "destinationAccountNumber": "123456", "amount": 150.50 }` | `201 Created` com o "recibo" da transação. |
 | `POST` | `/transactions/withdrawal` | Realiza um saque de uma conta. | `{ "sourceAccountNumber": "123456", "amount": 50.00 }` | `201 Created` com o "recibo" da transação. |
 | `POST` | `/transactions/transfer` | Realiza uma transferência entre contas. | `{ "sourceAccountNumber": "123456", "destinationAccountNumber": "789012", "amount": 25.00 }` | `201 Created` com o "recibo" da transação. |
+
+---
 
 ## 📈 Próximos Passos
 
