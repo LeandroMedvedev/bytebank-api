@@ -3,9 +3,11 @@ package br.com.bytebank.api.domain.user;
 import br.com.bytebank.api.domain.base.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.envers.Audited;
 
-@Table(name = "users")
+@Audited
 @Entity
+@Table(name = "users")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
