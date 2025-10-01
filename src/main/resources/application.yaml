@@ -1,15 +1,14 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
-
+    url: jdbc:postgresql://host.docker.internal:5432/bytebank_db
+    username: bytebank
+    password: docker
   jpa:
     hibernate:
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-
-  h2:
-    console:
-      enabled: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
