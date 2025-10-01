@@ -1,6 +1,7 @@
 package br.com.bytebank.api.domain.transaction;
 
 import br.com.bytebank.api.domain.account.Account;
+import br.com.bytebank.api.domain.base.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Transaction {
+public class Transaction extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

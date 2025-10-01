@@ -1,5 +1,6 @@
 package br.com.bytebank.api.domain.account;
 
+import br.com.bytebank.api.domain.base.Auditable;
 import br.com.bytebank.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Account {
+public class Account extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +44,4 @@ public class Account {
 
     @Column(name = "is_active")
     private boolean isActive;
-
-    // TODO: Adicionar campos createdAt e updatedAt com Spring Data Auditing
 }
