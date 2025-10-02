@@ -107,6 +107,26 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- Plugin JaCoCo para visualizar cobertura de testes -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal> <!-- "Prepara" o ambiente para que, quando os testes forem executados, o JaCoCo possa "observar" qual código é chamado. -->
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal> <!-- Após a execução dos testes, pega os dados coletados e gera o relatório visual. -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
